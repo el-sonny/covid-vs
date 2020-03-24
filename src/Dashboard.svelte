@@ -1,6 +1,6 @@
 <script>
 	import Papa from 'papaparse';
-	import EvolutionGraph from './EvolutionGraph.svelte';
+	import EvolutionDash from './EvolutionDash.svelte';
 	import CountriesList from './CountriesList.svelte';
 
   	export let dataSource = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
@@ -8,7 +8,7 @@
   	const pallete = ['#EE4266','#2A1E5C','#0A0F0D','#C4CBCA','#3CBBB1'];	
 	const pallete2 = ['#FBDCE3','#D8D6E1','#D2D3D3','#F4F5F5','#DBF2F0'];
 
-  	let selectedCountries = ['Mexico','Bolivia','Korea, South'];	
+  	let selectedCountries = ['Mexico','Korea, South','Italy','Spain','US'];	
   	let countries = getCovidData();
 
 	async function getCovidData() {		
@@ -24,6 +24,7 @@
 					data : Object.values(row).splice(4),
 					labels : Object.keys(row).splice(4),
 					filtered : selectedCountries.findIndex(label => row['Country/Region'] === label) >= 0,
+					dayZero : Object.values(row).splice(4).findIndex(cases => cases > 20)
 				}));
 		return formatted;
 	}
@@ -37,7 +38,7 @@
 	    <div><CountriesList countries={countries} /></div> 
 	    <div>
 	    	<h1>Covid Dashboard</h1>
-	    	<EvolutionGraph countries={countries.filter(c => c.filtered)} />
+	    	<EvolutionDash countries={countries.filter(c => c.filtered)} />
 	    </div>
 
 	  </div>
