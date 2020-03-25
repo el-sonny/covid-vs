@@ -5,11 +5,8 @@
 
   	export let dataSource = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
 
-  	const pallete = ['#EE4266','#2A1E5C','#0A0F0D','#C4CBCA','#3CBBB1'];	
-	const pallete2 = ['#FBDCE3','#D8D6E1','#D2D3D3','#F4F5F5','#DBF2F0'];
-
   	let countries = getCovidData();
-  	$: selectedCountries = ['Mexico','Korea, South','Italy','Spain','US'];	
+  	$: selectedCountries = ['Mexico','Korea, South','Italy','Spain','US','Argentina','Brazil','Chile'];	
 
 	async function getCovidData() {		
 		const res = await fetch(dataSource);
