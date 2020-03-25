@@ -1,14 +1,20 @@
 <script>
 	import EvolutionGraph from './EvolutionGraph.svelte';
+	import { createEventDispatcher } from 'svelte';
+
 	export let countries;
 
+	const dispatch = createEventDispatcher();
 	const pallete = ['#EE4266','#2A1E5C','#0A0F0D','#C4CBCA','#3CBBB1'];	
 	const pallete2 = ['#FBDCE3','#D8D6E1','#D2D3D3','#F4F5F5','#DBF2F0'];
+	
 	$: options = {
-		scale : 'linear',
-		dayZero : false,
+		scale : 'logarithmic',
+		dayZero : true,
 		data : 'cases'
 	};
+
+	$: labels = countries.length > 0 ? countries[0].labels : [];
 
 	function toggleDayZero(){
 		options.dayZero = !options.dayZero;
@@ -19,24 +25,27 @@
 	function toggleScale(){
 		options.scale = options.scale === 'linear' ? 'logarithmic' : 'linear';
 	}
+	function toggleCountry(country){
+		dispatch('toggleCountry', {country: country});
+	}
 </script>
 <h3>Case Evolution by Country</h3>
 <nav>		
 	<ul>
 		{#each countries as country, i}
 			<li >
-				<button style='background-color:{pallete[i % pallete.length]}'>{country.name}</button>
+				<button style='background-color:{pallete[i % pallete.length]}' on:click={toggleCountry(country)}>{country.name}</button>
 			</li>
 		{/each}
 	</ul>
 	<ul class='controls'>
-		<li><button on:click={toggleDayZero}>Day Zero</button></li>
-		<li><button on:click={toggleByRate}>Toggle rate</button></li>
-		<li><button on:click="{toggleScale}">Toggle scale</button></li>
+		<li><button on:click={toggleDayZero}>{options.dayZero ? 'Day Zero' : 'Natural Days'}</button></li>
+		<li><button on:click={toggleByRate}>Data: {options.data}</button></li>
+		<li><button on:click="{toggleScale}">Scale : {options.scale}</button></li>
 	</ul>
 </nav>	
 
-<EvolutionGraph countries={countries} options={options}/>
+<EvolutionGraph countries={countries} labels={labels} options={options}/>
 
 <style>
 	nav .controls{

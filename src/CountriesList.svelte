@@ -1,12 +1,18 @@
 <script>
+	import { createEventDispatcher } from 'svelte';
 	export let countries;	
-	let searchTerm = "";
+	const dispatch = createEventDispatcher();
 	$: filteredList = countries.filter(item => item.name.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1);	
+	let searchTerm = "";
 
 	function diffPercent(country){
 		const last = country.data[country.data.length-1]; 
 		const penultimate = country.data[country.data.length-2];
 		return Math.round(((last - penultimate)/penultimate) * 100);
+	}
+	function toggleCountry(country){
+		console.log(country);
+		dispatch('toggleCountry', {country: country});
 	}
 </script>
 <p>
@@ -14,7 +20,7 @@
 </p>
 <ul>
 	{#each filteredList as country}
-		<li>
+		<li on:click={toggleCountry(country)}>
 			<span class='label'>{country.name}</span>
 			<span class='data-point alt'>{diffPercent(country)} %</span>
 			<span class='data-point'>{new Intl.NumberFormat().format(country.data[country.data.length-1])}</span>
@@ -40,6 +46,7 @@
 		padding:0 0 0 5px;
 		width:100%;
 		justify-content: flex-end;
+		cursor:pointer;
 
 	}
 	li .label{

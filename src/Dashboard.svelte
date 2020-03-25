@@ -8,8 +8,8 @@
   	const pallete = ['#EE4266','#2A1E5C','#0A0F0D','#C4CBCA','#3CBBB1'];	
 	const pallete2 = ['#FBDCE3','#D8D6E1','#D2D3D3','#F4F5F5','#DBF2F0'];
 
-  	let selectedCountries = ['Mexico','Korea, South','Italy','Spain','US'];	
   	let countries = getCovidData();
+  	$: selectedCountries = ['Mexico','Korea, South','Italy','Spain','US'];	
 
 	async function getCovidData() {		
 		const res = await fetch(dataSource);
@@ -23,10 +23,14 @@
 					long : row.Long,
 					data : Object.values(row).splice(4),
 					labels : Object.keys(row).splice(4),
-					filtered : selectedCountries.findIndex(label => row['Country/Region'] === label) >= 0,
 					dayZero : Object.values(row).splice(4).findIndex(cases => cases > 20)
 				}));
 		return formatted;
+	}
+
+	function toggleCountry(e){
+		const index = selectedCountries.findIndex(label => label === e.detail.country.name);
+		selectedCountries = index >= 0 ? selectedCountries.filter(c => c !== e.detail.country.name) : [...selectedCountries,e.detail.country.name];
 	}
 
 </script>
@@ -35,10 +39,10 @@
 	<div class="with-sidebar">
 	  <div>
 
-	    <div><CountriesList countries={countries} /></div> 
+	    <div><CountriesList on:toggleCountry={toggleCountry} countries={countries} /></div> 
 	    <div>
 	    	<h1>Covid Dashboard</h1>
-	    	<EvolutionDash countries={countries.filter(c => c.filtered)} />
+	    	<EvolutionDash countries={countries.filter(c =>  selectedCountries.findIndex(label => c.name === label) >= 0)} on:toggleCountry={toggleCountry}/>
 	    </div>
 
 	  </div>
@@ -74,6 +78,6 @@ h1{
   flex-basis: 0;
   flex-grow: 999;
   min-width: calc(50% - var(--s1));
-  overflow:hidden;
+  overflow-x: hidden;
 }
 </style>

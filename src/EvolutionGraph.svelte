@@ -2,8 +2,9 @@
 	import LineGraph from './LineGraph.svelte';
 
 	export let countries;
+	export let labels;
 	export let options = {
-		scale : 'linear',
+		scale : 'logarithmic',
 		dayZero : false,
 		data : 'cases'
 	};
@@ -22,10 +23,12 @@
     	}
 	});
 
+	$: _labels = options.dayZero && countries.length > 0 ? [...Array(Math.max(...countries.map(c => c.dayZero))).keys()] : labels;
+
 	function getDerivative(c,i,arr){
 		const der = i > 0 && c > 0 ? Math.round((c - arr[i-1]) / arr[i-1] * 100) : 0;
 		return der;
 	}
 </script>
 
-<LineGraph labels={countries[0].labels} datasets={datasets} scale={options.scale} />
+<LineGraph labels={_labels} datasets={datasets} scale={options.scale} />
