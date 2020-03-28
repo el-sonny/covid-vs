@@ -1,9 +1,13 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
 	export let countries;	
+	
 	const dispatch = createEventDispatcher();
-	$: filteredList = countries.filter(item => item.name.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1);	
 	let searchTerm = "";
+
+	$: filterBySelected = c => c.selectedIndex >= 0;
+	$: filterBySearch = c => c.name.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1;
+	$: filteredList = searchTerm.length > 0 ? countries.filter(filterBySearch) : countries.filter(filterBySelected);		
 
 	function diffPercent(country){
 		const last = country.data[country.data.length-1]; 
@@ -11,8 +15,8 @@
 		return Math.round(((last - penultimate)/penultimate) * 100);
 	}
 	function toggleCountry(country){
-		console.log(country);
 		dispatch('toggleCountry', {country: country});
+		searchTerm = "";
 	}
 </script>
 <p>
@@ -20,7 +24,7 @@
 </p>
 <ul>
 	{#each filteredList as country}
-		<li on:click={toggleCountry(country)}>
+		<li on:click={toggleCountry(country)} style='background-color: {country.color}' >
 			<span class='label'>{country.name}</span>
 			<span class='data-point alt'>{diffPercent(country)} %</span>
 			<span class='data-point'>{new Intl.NumberFormat().format(country.data[country.data.length-1])}</span>
@@ -38,15 +42,17 @@
 	li{
 		display:flex;
 		list-style: none;
-		border:1px solid #000;
 		margin-bottom:5px;
 		text-align: center;
 		height:40px;
 		line-height:40px;
-		padding:0 0 0 5px;
+		padding:0 0 0 10px;
 		width:100%;
 		justify-content: flex-end;
 		cursor:pointer;
+		color:white;
+		font-weight: bold;
+		background-color: #555
 
 	}
 	li .label{
@@ -54,12 +60,12 @@
 		text-align:left;
 	}
 	li .data-point{
-		background-color:#665191;
+		background-color:rgba(100,100,100,.5);
 		color:white;
 		width:20%;
 		font-weight:bold;
 	}
 	li .data-point.alt{
-		background-color: #669151;
+		background-color: rgba(200,200,200,.5);
 	}
 </style>

@@ -5,11 +5,12 @@
 	export let labels;
 	export let datasets;
 	export let scale = 'linear';
+	export let chartId = 'myChart'
 	
 	let chart;
 		
 	function renderChart(){
-		const ctx = document.getElementById("myChart").getContext("2d");
+		const ctx = document.getElementById(chartId).getContext("2d");
 		chart = new Chart(ctx, {
 			type: "line",
 			data: {
@@ -33,4 +34,4 @@
 		renderChart();
 	});
 </script>
-<canvas id="myChart"></canvas>
+<canvas id={chartId}></canvas>

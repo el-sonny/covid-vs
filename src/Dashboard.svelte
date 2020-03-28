@@ -1,30 +1,16 @@
 <script>
-	import Papa from 'papaparse';
 	import EvolutionDash from './EvolutionDash.svelte';
 	import CountriesList from './CountriesList.svelte';
+	import CountrySelector from './CountrySelector.svelte';
+	import * as utils from 'utils.js';
 
-  	export let dataSource = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
-
-  	let countries = getCovidData();
-  	$: selectedCountries = ['Mexico','Korea, South','Italy','Spain','US','Argentina','Brazil','Chile'];	
-
-	async function getCovidData() {		
-		const res = await fetch(dataSource);
-		const csv = await res.text();
-		const json = Papa.parse(csv,{header: true}).data;
-		const formatted = json
-			.filter(row => row['Province/State'] === '')
-			.map(row => ({
-					name : row['Country/Region'],
-					lat : row.Lat,
-					long : row.Long,
-					data : Object.values(row).splice(4),
-					labels : Object.keys(row).splice(4),
-					dayZero : Object.values(row).splice(4).findIndex(cases => cases > 20)
-				}));
-		return formatted;
-	}
-
+  $: selectedCountries = ['Mexico','Korea, South','Italy','Spain','US','Argentina','Brazil','Chile'];	
+  const casesData = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
+  const deathsData = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv';
+  
+  const cases = utils.serialize(casesData,20);
+  const deaths = utils.serialize(deathsData,1);
+    
 	function toggleCountry(e){
 		const index = selectedCountries.findIndex(label => label === e.detail.country.name);
 		selectedCountries = index >= 0 ? selectedCountries.filter(c => c !== e.detail.country.name) : [...selectedCountries,e.detail.country.name];
@@ -32,19 +18,23 @@
 
 </script>
 
-{#await countries then countries}
-	<div class="with-sidebar">
-	  <div>
+<div class="with-sidebar">
+  <div>
+	{#await cases then countries}
+    	<div><CountriesList on:toggleCountry={toggleCountry} countries={utils.serializeSelected(countries,selectedCountries)}  /></div> 
+    {/await}
+    <div>
+    	<h1>Covid Dashboard</h1>
+    	{#await cases then countries}
+    		<EvolutionDash countries={utils.serializeSelected(countries,selectedCountries)} />
+    	{/await}
 
-	    <div><CountriesList on:toggleCountry={toggleCountry} countries={countries} /></div> 
-	    <div>
-	    	<h1>Covid Dashboard</h1>
-	    	<EvolutionDash countries={countries.filter(c =>  selectedCountries.findIndex(label => c.name === label) >= 0)} on:toggleCountry={toggleCountry}/>
-	    </div>
-
-	  </div>
-	</div>	
-{/await}
+    	{#await deaths then deaths}
+			<EvolutionDash chartId='myChart2' countries={utils.serializeSelected(deaths,selectedCountries)} on:toggleCountry={toggleCountry}/>    	
+    	{/await}
+    </div>
+  </div>
+</div>	
 
 <style>
 
