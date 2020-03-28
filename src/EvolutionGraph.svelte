@@ -21,7 +21,7 @@
     	}
 	});
 
-	$: _labels = options.dayZero && countries.length > 0 ? [...Array(Math.max(...countries.map(c => c.dayZero))).keys()] : labels;
+	$: _labels = options.dayZero && countries.length > 0 ? [...Array(labels.length - Math.min(...countries.map(c => c.dayZero)) + 3).keys()] : labels;
 
 	function getDerivative(c,i,arr){
 		const der = i > 0 && c > 0 ? Math.round((c - arr[i-1]) / arr[i-1] * 100) : 0;

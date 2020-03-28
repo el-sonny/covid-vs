@@ -8,8 +8,8 @@
   const casesData = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
   const deathsData = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv';
   
-  const cases = utils.serialize(casesData,20);
-  const deaths = utils.serialize(deathsData,1);
+  const cases = utils.serialize(casesData);
+  const deaths = utils.serialize(deathsData);
     
 	function toggleCountry(e){
 		const index = selectedCountries.findIndex(label => label === e.detail.country.name);
@@ -26,11 +26,11 @@
     <div>
     	<h1>Covid Dashboard</h1>
     	{#await cases then countries}
-    		<EvolutionDash countries={utils.serializeSelected(countries,selectedCountries)} />
+    		<EvolutionDash countries={utils.serializeSelected(countries,selectedCountries,20)} />
     	{/await}
 
     	{#await deaths then deaths}
-			<EvolutionDash chartId='myChart2' countries={utils.serializeSelected(deaths,selectedCountries)} on:toggleCountry={toggleCountry}/>    	
+			<EvolutionDash chartId='myChart2' countries={utils.serializeSelected(deaths,selectedCountries,1)} on:toggleCountry={toggleCountry}/>    	
     	{/await}
     </div>
   </div>
