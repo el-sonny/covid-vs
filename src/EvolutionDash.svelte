@@ -23,13 +23,13 @@
 	}
 </script>
 
-<nav>		
+<!-- <nav>		
 	<ul class='controls'>
 		<li><button on:click={toggleDayZero}>{options.dayZero ? 'Day Zero' : 'Natural Days'}</button></li>
 		<li><button on:click={toggleByRate}>Data: {options.data}</button></li>
 		<li><button on:click="{toggleScale}">Scale : {options.scale}</button></li>
 	</ul>
-</nav>
+</nav> -->
 <EvolutionGraph countries={countries.filter(c=> c.selectedIndex >= 0)} labels={labels} options={options} chartId={chartId}/>
 
 <style>

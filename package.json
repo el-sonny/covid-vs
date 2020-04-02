@@ -9,6 +9,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.0",
     "@rollup/plugin-node-resolve": "^7.0.0",
+    "@smui/switch": "^1.0.0-beta.20",
     "rollup": "^1.20.0",
     "rollup-plugin-i18n-csv": "^1.2.0",
     "rollup-plugin-livereload": "^1.0.0",
@@ -21,6 +22,7 @@
     "fusioncharts": "^3.15.1-sr.1",
     "papaparse": "^5.1.1",
     "sirv-cli": "^0.4.4",
-    "svelte-fusioncharts": "^1.0.0"
+    "svelte-fusioncharts": "^1.0.0",
+    "svelte-material-ui": "^1.0.0-beta.20"
   }
 }

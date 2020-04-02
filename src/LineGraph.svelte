@@ -6,6 +6,9 @@
 	export let datasets;
 	export let scale = 'linear';
 	export let chartId = 'myChart'
+	export let yTitle;
+	export let xTitle;
+	export let title;
 	
 	let chart;
 		
@@ -18,11 +21,44 @@
 				datasets: datasets
 			},
 			options: {
-				legend : {display: false},
+				animation: { duration: 0},
+				title : {
+					display: true,
+					fontSize : 20,
+					text : title
+				},
+				legend : {
+					display: true,
+					labels : {
+						boxWidth : 12,
+						fontSize : 14,
+						usePointStyle : true,
+						padding : 15,
+					},
+				},
 				scales : {
 					yAxes: [{
 						display: true,
 						type: scale,
+						scaleLabel : {
+							display : true,
+							labelString : yTitle
+						},
+						ticks: {
+		                    callback: (value) => value >= 1000 ? value / 1e3 + ' K' : value
+		                },
+					}],
+
+					xAxes: [{
+						display: true,
+						scaleLabel : {
+							display : true,
+							labelString : xTitle
+						},
+						ticks: {
+		                    maxRotation : 0,
+		                    autoSkipPadding : 5,
+		                },
 					}]
 				}
 			}

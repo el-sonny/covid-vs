@@ -4,10 +4,13 @@
 	export let countries;
 	export let labels;
 	export let chartId = 'myChart'
+	export let title;
+	export let yTitle;
+	export let xTitle;
 	export let options = {
 		scale : 'logarithmic',
 		dayZero : false,
-		data : 'cases'
+		data : 'cases',
 	};
 
 	$: datasets = countries.map((c,i) => {
@@ -18,6 +21,7 @@
 	        data: trimmedData,
 	        borderColor: c.color,
 	        backgroundColor : 'rgba(0, 0, 0, 0)',
+	        pointBackgroundColor : c.color,
     	}
 	});
 
@@ -29,4 +33,4 @@
 	}
 </script>
 
-<LineGraph labels={_labels} datasets={datasets} scale={options.scale} chartId={chartId} />
+<LineGraph yTitle={yTitle} xTitle={xTitle} labels={_labels} datasets={datasets} scale={options.scale} chartId={chartId} title={title} />

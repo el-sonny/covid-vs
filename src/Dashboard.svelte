@@ -1,16 +1,27 @@
 <script>
-	import EvolutionDash from './EvolutionDash.svelte';
+  import EvolutionDash from './EvolutionDash.svelte';
+  import EvolutionGraph from './EvolutionGraph.svelte';
 	import CountriesList from './CountriesList.svelte';
-	import CountrySelector from './CountrySelector.svelte';
+  import DataControls from './DataControls.svelte';
 	import * as utils from 'utils.js';
 
   $: selectedCountries = ['Mexico','Korea, South','Italy','Spain','US','Argentina','Brazil','Chile'];	
+  $: options = {
+    scale : 'logarithmic',
+    dayZero : true,
+    data : 'cases'
+  };
+
   const casesData = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
   const deathsData = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv';
-  
+  const recoveriesData = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv';
+  const mxData = 'https://overflow.ai/coronavirus/api';
   const cases = utils.serialize(casesData);
   const deaths = utils.serialize(deathsData);
-    
+  const recoveries = utils.serialize(recoveriesData);
+  //const mx = utils.serializeMX(mxData).then((data)=> console.log(data));
+
+
 	function toggleCountry(e){
 		const index = selectedCountries.findIndex(label => label === e.detail.country.name);
 		selectedCountries = index >= 0 ? selectedCountries.filter(c => c !== e.detail.country.name) : [...selectedCountries,e.detail.country.name];
@@ -19,19 +30,53 @@
 </script>
 
 <div class="with-sidebar">
-  <div>
+  <div><div>
+     
 	{#await cases then countries}
-    	<div><CountriesList on:toggleCountry={toggleCountry} countries={utils.serializeSelected(countries,selectedCountries)}  /></div> 
-    {/await}
-    <div>
+    	<CountriesList on:toggleCountry={toggleCountry} countries={utils.serializeSelected(countries,selectedCountries)}  />
+  {/await}
+      <DataControls bind:options={options} />
+   </div><div>
     	<h1>Covid Dashboard</h1>
-    	{#await cases then countries}
-    		<EvolutionDash countries={utils.serializeSelected(countries,selectedCountries,20)} />
-    	{/await}
+    	<section class='graph'>
+        {#await cases then countries}
+          <EvolutionGraph 
+            countries={utils.serializeSelected(countries,selectedCountries,20).filter(c=> c.selectedIndex >= 0)} 
+            labels={countries[0].labels} 
+            options={options}
+            title = "COVID19 Cases"
+            yTitle = {options.scale === 'logarithmic' ? "Cases (logarithmic scale)" : "Cases"}          
+            xTitle = {options.dayZero ? 'Days From Day Zero (20th Case)' : 'Date'}
+            chartId="hilord" />
+      	{/await}
+      </section>
+      <section class='graph'>
+      	{#await deaths then deaths}
+    			<EvolutionGraph 
+              countries={utils.serializeSelected(deaths,selectedCountries,2).filter(c=> c.selectedIndex >= 0)} 
+              labels={deaths[0].labels} 
+              options={options}
+              title = "COVID19 Deaths"
+              yTitle = {options.scale === 'logarithmic' ? "Deaths (logarithmic scale)" : "Deaths"}
+              xTitle = {options.dayZero ? 'Days From Day Zero (2nd Death)' : 'Date'}
+              chartId="hilord25" />
+      	{/await}
+      </section>
 
-    	{#await deaths then deaths}
-			<EvolutionDash chartId='myChart2' countries={utils.serializeSelected(deaths,selectedCountries,1)} on:toggleCountry={toggleCountry}/>    	
-    	{/await}
+       <section class='graph'>
+        {#await recoveries then recoveries}
+          <EvolutionGraph 
+              countries={utils.serializeSelected(recoveries,selectedCountries,1).filter(c=> c.selectedIndex >= 0)} 
+              labels={recoveries[0].labels} 
+              options={options}
+              title = "COVID19 Recoveries"
+              yTitle = {options.scale === 'logarithmic' ? "Recoveries (logarithmic scale)" : "Recoveries"}
+              xTitle = {options.dayZero ? 'Days From Day Zero (1st Recoverie)' : 'Date'}
+              chartId="hilord24" />
+        {/await}
+      </section>
+
+
     </div>
   </div>
 </div>	
@@ -66,5 +111,8 @@ h1{
   flex-grow: 999;
   min-width: calc(50% - var(--s1));
   overflow-x: hidden;
+}
+section.graph{
+  padding:0 10px 30px;
 }
 </style>

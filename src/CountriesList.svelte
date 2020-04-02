@@ -26,7 +26,7 @@
 	{#each filteredList as country}
 		<li on:click={toggleCountry(country)} style='background-color: {country.color}' >
 			<span class='label'>{country.name}</span>
-			<span class='data-point alt'>{diffPercent(country)} %</span>
+			<span class='data-point alt'>{diffPercent(country)} %</span>			
 			<span class='data-point'>{new Intl.NumberFormat().format(country.data[country.data.length-1])}</span>
 		</li>
 	{/each}
