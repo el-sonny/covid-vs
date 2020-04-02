@@ -18,16 +18,29 @@
 		dispatch('toggleCountry', {country: country});
 		searchTerm = "";
 	}
+	function toggleHighlight(country){
+		dispatch('toggleHighlight', {country: country});
+	}
 </script>
 <p>
 	<input bind:value={searchTerm} />
 </p>
 <ul>
 	{#each filteredList as country}
-		<li on:click={toggleCountry(country)} style='background-color: {country.color}' >
+		<li  style='background-color: {country.color}; color: {country.bgColor}' >
 			<span class='label'>{country.name}</span>
-			<span class='data-point alt'>{diffPercent(country)} %</span>			
-			<span class='data-point'>{new Intl.NumberFormat().format(country.data[country.data.length-1])}</span>
+			<span class='controls'>
+				<button style='color: {country.bgColor}' on:click={toggleHighlight(country)}>
+					{#if country.order === 0}
+						<i class="material-icons">star</i>
+					{:else}
+						<i class="material-icons">star_border</i>
+					{/if}
+				</button>
+				<button style='color: {country.bgColor}' on:click={toggleCountry(country)}><i class="material-icons">clear</i></button>
+			</span>
+			<!-- <span class='data-point alt'>{diffPercent(country)} %</span>			
+			<span class='data-point'>{new Intl.NumberFormat().format(country.data[country.data.length-1])}</span> -->
 		</li>
 	{/each}
 </ul>
@@ -67,5 +80,17 @@
 	}
 	li .data-point.alt{
 		background-color: rgba(200,200,200,.5);
+	}
+	li .controls{		
+		margin:0 10px 0 0;
+	}
+	li .controls button{
+		background-color: transparent;
+		color:white;
+		line-height:38px;
+		text-shadow:1px 1px 3px #222;
+	}
+	li .controls button i{
+		line-height:38px;
 	}
 </style>

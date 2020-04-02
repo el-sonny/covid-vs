@@ -6,6 +6,7 @@
 	import * as utils from 'utils.js';
 
   $: selectedCountries = ['Mexico','Korea, South','Italy','Spain','US','Argentina','Brazil','Chile'];	
+  $: highlightedCountry = '';
   $: options = {
     scale : 'logarithmic',
     dayZero : true,
@@ -24,8 +25,12 @@
 
 	function toggleCountry(e){
 		const index = selectedCountries.findIndex(label => label === e.detail.country.name);
+    highlightedCountry = highlightedCountry === e.detail.country.name ? '' : highlightedCountry;
 		selectedCountries = index >= 0 ? selectedCountries.filter(c => c !== e.detail.country.name) : [...selectedCountries,e.detail.country.name];
 	}
+  function toggleHighlight(e){
+    highlightedCountry = highlightedCountry === e.detail.country.name ? '' : e.detail.country.name;
+  }
 
 </script>
 
@@ -33,7 +38,7 @@
   <div><div>
      
 	{#await cases then countries}
-    	<CountriesList on:toggleCountry={toggleCountry} countries={utils.serializeSelected(countries,selectedCountries)}  />
+    	<CountriesList on:toggleCountry={toggleCountry} on:toggleHighlight={toggleHighlight} countries={utils.serializeSelected(countries,selectedCountries,highlightedCountry)}  />
   {/await}
       <DataControls bind:options={options} />
    </div><div>
@@ -41,7 +46,7 @@
     	<section class='graph'>
         {#await cases then countries}
           <EvolutionGraph 
-            countries={utils.serializeSelected(countries,selectedCountries,20).filter(c=> c.selectedIndex >= 0)} 
+            countries={utils.serializeSelected(countries,selectedCountries,highlightedCountry,20).filter(c=> c.selectedIndex >= 0)} 
             labels={countries[0].labels} 
             options={options}
             title = "COVID19 Cases"
@@ -53,7 +58,7 @@
       <section class='graph'>
       	{#await deaths then deaths}
     			<EvolutionGraph 
-              countries={utils.serializeSelected(deaths,selectedCountries,2).filter(c=> c.selectedIndex >= 0)} 
+              countries={utils.serializeSelected(deaths,selectedCountries,highlightedCountry,2).filter(c=> c.selectedIndex >= 0)} 
               labels={deaths[0].labels} 
               options={options}
               title = "COVID19 Deaths"
@@ -66,7 +71,7 @@
        <section class='graph'>
         {#await recoveries then recoveries}
           <EvolutionGraph 
-              countries={utils.serializeSelected(recoveries,selectedCountries,1).filter(c=> c.selectedIndex >= 0)} 
+              countries={utils.serializeSelected(recoveries,selectedCountries,highlightedCountry,1).filter(c=> c.selectedIndex >= 0)} 
               labels={recoveries[0].labels} 
               options={options}
               title = "COVID19 Recoveries"

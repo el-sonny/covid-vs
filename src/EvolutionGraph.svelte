@@ -22,6 +22,7 @@
 	        borderColor: c.color,
 	        backgroundColor : 'rgba(0, 0, 0, 0)',
 	        pointBackgroundColor : c.color,
+	        order: c.order
     	}
 	});
 
