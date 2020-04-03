@@ -27,17 +27,25 @@
 </p>
 <ul>
 	{#each filteredList as country}
-		<li  style='background-color: {country.color}; color: {country.bgColor}' >
+		<li  style='background-color: {country.color}' >
 			<span class='label'>{country.name}</span>
 			<span class='controls'>
-				<button style='color: {country.bgColor}' on:click={toggleHighlight(country)}>
-					{#if country.order === 0}
-						<i class="material-icons">star</i>
+				{#if country.selectedIndex >= 0}
+					<button style='color: {country.bgColor}' on:click={toggleHighlight(country)}>
+						{#if country.order === 0}
+							<i class="material-icons">star</i>
+						{:else}
+							<i class="material-icons">star_border</i>
+						{/if}
+					</button>
+				{/if}
+				<button style='color: {country.bgColor}' on:click={toggleCountry(country)}>
+					{#if country.selectedIndex >= 0}
+						<i class="material-icons">clear</i>
 					{:else}
-						<i class="material-icons">star_border</i>
+						<i class="material-icons">add</i>
 					{/if}
 				</button>
-				<button style='color: {country.bgColor}' on:click={toggleCountry(country)}><i class="material-icons">clear</i></button>
 			</span>
 			<!-- <span class='data-point alt'>{diffPercent(country)} %</span>			
 			<span class='data-point'>{new Intl.NumberFormat().format(country.data[country.data.length-1])}</span> -->

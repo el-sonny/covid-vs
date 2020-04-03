@@ -5,7 +5,7 @@
   import DataControls from './DataControls.svelte';
 	import * as utils from 'utils.js';
 
-  $: selectedCountries = ['Mexico','Korea, South','Italy','Spain','US','Argentina','Brazil','Chile'];	
+  $: selectedCountries = ['Mexico','Korea, South','Italy','Spain','US','Brazil','Chile'];	
   $: highlightedCountry = '';
   $: options = {
     scale : 'logarithmic',
@@ -76,7 +76,7 @@
               options={options}
               title = "COVID19 Recoveries"
               yTitle = {options.scale === 'logarithmic' ? "Recoveries (logarithmic scale)" : "Recoveries"}
-              xTitle = {options.dayZero ? 'Days From Day Zero (1st Recoverie)' : 'Date'}
+              xTitle = {options.dayZero ? 'Days From Day Zero (1st Recovery)' : 'Date'}
               chartId="hilord24" />
         {/await}
       </section>
@@ -105,10 +105,9 @@ h1{
 .with-sidebar > * > * {
   margin: calc(var(--s1) / 2);
   flex-grow: 1;
-
   max-height: 100vh;
   overflow-y:scroll;
-  min-width:350px;
+  width:380px;
 }
 
 .with-sidebar > * > :last-child {

@@ -2,9 +2,9 @@
 
 ---
 
-# YA CODIV Dashboard
+# Yet Another CODIV Dashboard
 
-This is a dashboard that allows you to generate graphs comparing countries
+This is a dashboard that allows you to generate graphs comparing countries.
 
 ## Get started
 
