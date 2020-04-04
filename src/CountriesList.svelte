@@ -21,6 +21,9 @@
 	function toggleHighlight(country){
 		dispatch('toggleHighlight', {country: country});
 	}
+	function toggleZoom(country){
+		dispatch('toggleZoom',{country:country});
+	}
 </script>
 <p>
 	<input bind:value={searchTerm} />

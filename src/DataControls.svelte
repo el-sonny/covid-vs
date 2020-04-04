@@ -2,7 +2,8 @@
 	export let options = {
 		scale : 'logarithmic',
 		dayZero : true,
-		data : 'cases'
+		data : 'cases',
+		zoom : 100,
 	}
 
 	function toggleDayZero(){
@@ -15,25 +16,57 @@
 		options.scale = options.scale === 'linear' ? 'logarithmic' : 'linear';
 	}
 </script>
-
+<h3>Graph Controls</h3>
 <ul>
+	
 	<li on:click={toggleDayZero}>
 		<span class='text'>{options.dayZero ? 'Day Zero' : 'Natural Days'}</span>
-		<span class='indicator'></span>
+		<span class='indicator'>
+			{#if options.dayZero}
+				<i class='material-icons on'>toggle_on</i>
+			{:else}
+				<i class='material-icons off'>toggle_off</i>
+			{/if}
+		</span>
 	</li>
 	<li on:click="{toggleScale}" >
-		<span class='text'>Scale : {options.scale} </span>
-		<span class='indicator'></span>
+		<span class='text'>Scale: {options.scale} </span>
+		<span class='indicator'>
+			{#if options.scale === 'logarithmic'}
+				<i class='material-icons on'>toggle_on</i>
+			{:else}
+				<i class='material-icons off'>toggle_off</i>
+			{/if}
+		</span>
 	</li>
 
 	<li on:click={toggleByRate}>
 		<span class='text'>Data: {options.data} </span>
-		<span class='indicator'></span>
+		<span class='indicator'>
+			{#if options.data === 'cases'}
+				<i class='material-icons on'>toggle_on</i>
+			{:else}
+				<i class='material-icons off'>toggle_off</i>
+			{/if}
+		</span>
 	</li>
-
+	
+	<li class='range-li'>		
+		<span class='text range-container'>
+			<i class='material-icons'>search</i>
+			<input type='range' min='1' max='100' bind:value={options.zoom} class='range' />
+		</span>
+		<span clas='indicator'>{options.zoom}%</span>
+	</li>
 </ul>
-<style>
+ 
 
+
+<style>
+	h3{
+		margin:10px 5px;
+		text-align: center;
+	}
 	ul{
 		margin:10px 5px;
 		padding:0 20px;
@@ -47,11 +80,10 @@
 		line-height:40px;
 		width:100%;
 		justify-content: flex-end;
-		cursor:pointer;
-		color:white;
+		color:#444;
 		font-weight: bold;
-		background-color: #555;
 		padding:0 0 0 10px;
+		cursor: pointer;
 
 	}
 	li .text{
@@ -59,9 +91,32 @@
 		text-align:left;
 	}
 	li .indicator{
-		background-color:rgba(100,100,100,.5);
-		color:white;
 		width:20%;
 		font-weight:bold;
+		line-height:38px;
 	}
+	li .indicator i{
+		font-size: 32px;
+		line-height:40px;
+	}
+	li .indicator .on{
+		color:#016FB9;
+	}
+	li .range-container{
+		padding:0 17px 0 0;
+		display:flex;
+	}
+	li .range-container .material-icons{		
+		line-height: 41px;
+		margin-right:5px;
+	}
+	li.range-li{
+		padding:10px 10px 0 0;
+	}
+	li .range{
+		width:100%;
+		flex-grow: 1;
+
+	}
+	
 </style>

@@ -9,12 +9,13 @@
 	export let yTitle;
 	export let xTitle;
 	export let title;
+	export let maxY;
 	
 	let chart;
 		
 	function renderChart(){
 		const ctx = document.getElementById(chartId).getContext("2d");
-		chart = new Chart(ctx, {
+		let chartjsOptions = {
 			type: "line",
 			data: {
 				labels: labels,
@@ -45,7 +46,7 @@
 							labelString : yTitle
 						},
 						ticks: {
-		                    callback: (value) => value >= 1000 ? value / 1e3 + ' K' : value
+		                    callback: (value) => value >= 1000 ? Math.round(value / 1e3) + ' K' : Math.round(value),
 		                },
 					}],
 
@@ -62,7 +63,9 @@
 					}]
 				}
 			}
-		});
+		};
+		if(maxY) chartjsOptions.options.scales.yAxes[0].ticks.max = maxY;
+		chart = new Chart(ctx, chartjsOptions);
 	}
 	onMount(renderChart);
 	afterUpdate(() => {

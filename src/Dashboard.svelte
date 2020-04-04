@@ -5,12 +5,14 @@
   import DataControls from './DataControls.svelte';
 	import * as utils from 'utils.js';
 
-  $: selectedCountries = ['Mexico','Korea, South','Italy','Spain','US','Brazil','Chile'];	
+  $: selectedCountries = ['Brazil','Chile','Italy','Korea, South','Mexico','Spain','US',];	
   $: highlightedCountry = '';
+  $: zoomCountry = '';
   $: options = {
     scale : 'logarithmic',
     dayZero : true,
-    data : 'cases'
+    data : 'cases',
+    zoom : 100
   };
 
   const casesData = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
@@ -32,13 +34,18 @@
     highlightedCountry = highlightedCountry === e.detail.country.name ? '' : e.detail.country.name;
   }
 
+
 </script>
 
 <div class="with-sidebar">
   <div><div>
      
 	{#await cases then countries}
-    	<CountriesList on:toggleCountry={toggleCountry} on:toggleHighlight={toggleHighlight} countries={utils.serializeSelected(countries,selectedCountries,highlightedCountry)}  />
+    	<CountriesList 
+        on:toggleCountry={toggleCountry} 
+        on:toggleHighlight={toggleHighlight} 
+        countries={utils.serializeSelected(countries,selectedCountries,highlightedCountry)}
+         />
   {/await}
       <DataControls bind:options={options} />
    </div><div>
@@ -52,7 +59,7 @@
             title = "COVID19 Cases"
             yTitle = {options.scale === 'logarithmic' ? "Cases (logarithmic scale)" : "Cases"}          
             xTitle = {options.dayZero ? 'Days From Day Zero (20th Case)' : 'Date'}
-            chartId="hilord" />
+            chartId="casesChart" />
       	{/await}
       </section>
       <section class='graph'>
@@ -64,7 +71,7 @@
               title = "COVID19 Deaths"
               yTitle = {options.scale === 'logarithmic' ? "Deaths (logarithmic scale)" : "Deaths"}
               xTitle = {options.dayZero ? 'Days From Day Zero (2nd Death)' : 'Date'}
-              chartId="hilord25" />
+              chartId="deathsChart" />
       	{/await}
       </section>
 
@@ -77,7 +84,7 @@
               title = "COVID19 Recoveries"
               yTitle = {options.scale === 'logarithmic' ? "Recoveries (logarithmic scale)" : "Recoveries"}
               xTitle = {options.dayZero ? 'Days From Day Zero (1st Recovery)' : 'Date'}
-              chartId="hilord24" />
+              chartId="recoveriesChart" />
         {/await}
       </section>
 

@@ -11,6 +11,7 @@
 		scale : 'logarithmic',
 		dayZero : false,
 		data : 'cases',
+		zoom : 100
 	};
 
 	$: datasets = countries.map((c,i) => {
@@ -22,11 +23,14 @@
 	        borderColor: c.color,
 	        backgroundColor : 'rgba(0, 0, 0, 0)',
 	        pointBackgroundColor : c.color,
-	        order: c.order
+	        order: c.order,
+	        maxY : Math.max(...trimmedData)
     	}
 	});
 
 	$: _labels = options.dayZero && countries.length > 0 ? [...Array(labels.length - Math.min(...countries.map(c => c.dayZero)) + 3).keys()] : labels;
+
+	$: maxY = options.zoom === 100 ? false : Math.max(...datasets.map(c => c.maxY)) * (options.zoom/100);
 
 	function getDerivative(c,i,arr){
 		const der = i > 0 && c > 0 ? Math.round((c - arr[i-1]) / arr[i-1] * 100) : 0;
@@ -34,4 +38,4 @@
 	}
 </script>
 
-<LineGraph yTitle={yTitle} xTitle={xTitle} labels={_labels} datasets={datasets} scale={options.scale} chartId={chartId} title={title} />
+<LineGraph yTitle={yTitle} xTitle={xTitle} labels={_labels} datasets={datasets} scale={options.scale} chartId={chartId} title={title} maxY={maxY} />

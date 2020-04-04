@@ -23,6 +23,8 @@
     "papaparse": "^5.1.1",
     "sirv-cli": "^0.4.4",
     "svelte-fusioncharts": "^1.0.0",
-    "svelte-material-ui": "^1.0.0-beta.20"
+    "svelte-material-ui": "^1.0.0-beta.20",
+    "svelte-ui-slider": "0.0.9",
+    "svelte-ui-theme": "0.0.13"
   }
 }
