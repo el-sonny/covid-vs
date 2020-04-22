@@ -5,9 +5,10 @@
 	const dispatch = createEventDispatcher();
 	let searchTerm = "";
 
-	$: filterBySelected = c => c.selectedIndex >= 0;
-	$: filterBySearch = c => c.name.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1;
-	$: filteredList = searchTerm.length > 0 ? countries.filter(filterBySearch) : countries.filter(filterBySelected);		
+	$: expand = false;
+	const filterBySelected = c => c.selectedIndex >= 0;
+	const filterBySearch = c => c.name.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1;
+	$: filteredList = searchTerm.length > 0 ? countries.filter(filterBySearch) : expand ? countries : countries.filter(filterBySelected);		
 
 	function diffPercent(country){
 		const last = country.data[country.data.length-1]; 
@@ -25,8 +26,12 @@
 		dispatch('toggleZoom',{country:country});
 	}
 </script>
-<p>
-	<input bind:value={searchTerm} />
+<p class='input-container'>
+ 	<i class='material-icons'>search</i>
+ 	<input bind:value={searchTerm} />
+ 	<button on:click={() => expand = expand ? false:true}>
+ 		<i class='material-icons'>{expand ? 'expand_less' : 'expand_more'}</i>
+ 	</button>
 </p>
 <ul>
 	{#each filteredList as country}
@@ -46,9 +51,10 @@
 					{#if country.selectedIndex >= 0}
 						<i class="material-icons">clear</i>
 					{:else}
-						<i class="material-icons">add</i>
+						<i class="material-icons">visibility</i>
 					{/if}
 				</button>
+
 			</span>
 			<!-- <span class='data-point alt'>{diffPercent(country)} %</span>			
 			<span class='data-point'>{new Intl.NumberFormat().format(country.data[country.data.length-1])}</span> -->
@@ -103,5 +109,32 @@
 	}
 	li .controls button i{
 		line-height:38px;
+	}
+	
+	.input-container{
+		padding:5px 15px 5px 25px;
+		display: flex;
+	}
+
+	.input-container input{
+		padding:10px 8px;
+		box-sizing: border-box;
+		font-size:14px;
+		color:white;
+		flex:1;		
+		border: none;
+		background-color:#888;
+	}
+	.input-container i{
+		padding:5px 9px 0;
+		background-color:#ddd;
+	}
+	.input-container button{
+		line-height: 22px;
+		padding:0;
+	}
+
+	.input-container button i{
+		padding-bottom:7px!important;
 	}
 </style>

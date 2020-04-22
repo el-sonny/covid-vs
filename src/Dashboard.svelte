@@ -4,10 +4,13 @@
 	import CountriesList from './CountriesList.svelte';
   import DataControls from './DataControls.svelte';
 	import * as utils from 'utils.js';
+  import * as config from 'config.js';
 
-  $: selectedCountries = ['Brazil','Chile','Italy','Korea, South','Mexico','Spain','US',];	
+  $: selectedDatasetIndex = 0;
+  $: selectedDataset = config.datasets[selectedDatasetIndex];
+  $: selectedGraph = 0;
+  $: selectedCountries = selectedDataset.options.defaultSelected ? selectedDataset.options.defaultSelected : [];
   $: highlightedCountry = '';
-  $: zoomCountry = '';
   $: options = {
     scale : 'logarithmic',
     dayZero : true,
@@ -15,15 +18,8 @@
     zoom : 100
   };
 
-  const casesData = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
-  const deathsData = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv';
-  const recoveriesData = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv';
-  const mxData = 'https://overflow.ai/coronavirus/api';
-  const cases = utils.serialize(casesData);
-  const deaths = utils.serialize(deathsData);
-  const recoveries = utils.serialize(recoveriesData);
-  //const mx = utils.serializeMX(mxData).then((data)=> console.log(data));
-
+  $: entityList = utils.serialize(selectedDataset.timeSeries[0].url,selectedDataset.options);
+  $: currentData = utils.serialize(selectedDataset.timeSeries[selectedGraph].url,selectedDataset.options);
 
 	function toggleCountry(e){
 		const index = selectedCountries.findIndex(label => label === e.detail.country.name);
@@ -34,60 +30,52 @@
     highlightedCountry = highlightedCountry === e.detail.country.name ? '' : e.detail.country.name;
   }
 
+  function changeGraph(i){
+    selectedGraph = i;
+  }
+
 
 </script>
 
 <div class="with-sidebar">
   <div><div>
-     
-	{#await cases then countries}
-    	<CountriesList 
-        on:toggleCountry={toggleCountry} 
-        on:toggleHighlight={toggleHighlight} 
-        countries={utils.serializeSelected(countries,selectedCountries,highlightedCountry)}
-         />
-  {/await}
+      <h3>Datasets</h3>
+      <ul class='dataset-list'>
+        {#each config.datasets as dataset, i}
+        <li>
+          {dataset.title}
+        </li>
+        {/each}
+      </ul>
+      <h3>Entities</h3>
+    	{#await entityList then countries}
+      	<CountriesList 
+          on:toggleCountry={toggleCountry} 
+          on:toggleHighlight={toggleHighlight} 
+          countries={utils.serializeSelected(countries,selectedCountries,highlightedCountry)}
+           />
+      {/await}
       <DataControls bind:options={options} />
    </div><div>
     	<h1>Covid Dashboard</h1>
     	<section class='graph'>
-        {#await cases then countries}
+        <ul class='graph-selector'>
+          {#each selectedDataset.timeSeries as graph, i}
+            <li><button on:click={() => changeGraph(i)} class={i === selectedGraph ? 'selected' : '' }>{graph.label}</button></li>
+          {/each}
+        </ul>
+        {#await currentData then countries}
           <EvolutionGraph 
-            countries={utils.serializeSelected(countries,selectedCountries,highlightedCountry,20).filter(c=> c.selectedIndex >= 0)} 
+            countries={utils.serializeSelected(countries,selectedCountries,highlightedCountry,selectedDataset.timeSeries[selectedGraph].dayZero).filter(c=> c.selectedIndex >= 0)} 
             labels={countries[0].labels} 
             options={options}
-            title = "COVID19 Cases"
+            title = {selectedDataset.timeSeries[selectedGraph].title}
             yTitle = {options.scale === 'logarithmic' ? "Cases (logarithmic scale)" : "Cases"}          
             xTitle = {options.dayZero ? 'Days From Day Zero (20th Case)' : 'Date'}
             chartId="casesChart" />
       	{/await}
       </section>
-      <section class='graph'>
-      	{#await deaths then deaths}
-    			<EvolutionGraph 
-              countries={utils.serializeSelected(deaths,selectedCountries,highlightedCountry,2).filter(c=> c.selectedIndex >= 0)} 
-              labels={deaths[0].labels} 
-              options={options}
-              title = "COVID19 Deaths"
-              yTitle = {options.scale === 'logarithmic' ? "Deaths (logarithmic scale)" : "Deaths"}
-              xTitle = {options.dayZero ? 'Days From Day Zero (2nd Death)' : 'Date'}
-              chartId="deathsChart" />
-      	{/await}
-      </section>
-
-       <section class='graph'>
-        {#await recoveries then recoveries}
-          <EvolutionGraph 
-              countries={utils.serializeSelected(recoveries,selectedCountries,highlightedCountry,1).filter(c=> c.selectedIndex >= 0)} 
-              labels={recoveries[0].labels} 
-              options={options}
-              title = "COVID19 Recoveries"
-              yTitle = {options.scale === 'logarithmic' ? "Recoveries (logarithmic scale)" : "Recoveries"}
-              xTitle = {options.dayZero ? 'Days From Day Zero (1st Recovery)' : 'Date'}
-              chartId="recoveriesChart" />
-        {/await}
-      </section>
-
+  
 
     </div>
   </div>
@@ -97,6 +85,18 @@
 
 h1{
 	text-align:center;
+}
+
+h3{
+  padding: 0 25px;
+}
+.dataset-list{
+  list-style-type: none;
+  padding: 0 25px;
+}
+.dataset-list li{
+  padding:5px 10px;
+  margin:2px 0;
 }
 
 .with-sidebar {
@@ -125,5 +125,21 @@ h1{
 }
 section.graph{
   padding:0 10px 30px;
+}
+
+.graph-selector{
+  list-style-type: none;
+  display: flex;
+  justify-content: flex-end;
+}
+.graph-selector button{
+  background-color: #016FB9;
+  margin-left:10px;
+  color: white;
+  text-transform: capitalize;
+  padding:0 20px;
+}
+.graph-selector button.selected{
+  background-color: #EE4266;
 }
 </style>

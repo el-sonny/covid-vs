@@ -24,7 +24,14 @@
 	        backgroundColor : 'rgba(0, 0, 0, 0)',
 	        pointBackgroundColor : c.color,
 	        order: c.order,
-	        maxY : Math.max(...trimmedData)
+	        maxY : Math.max(...trimmedData),
+	        showLine : options.data === 'cases',
+	        pointStyle : options.data === 'cases' ? 'circle' : 'circle',/*
+	        trendlineLinear: {
+                style: c.color,
+                lineStyle: "line",
+                width: 3
+            }*/
     	}
 	});
 

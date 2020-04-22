@@ -1,5 +1,6 @@
 <script>
 	import Chart from "chart.js";
+	import 'chartjs-plugin-trendline';
   	import {onMount, afterUpdate} from 'svelte';
 	
 	export let labels;
